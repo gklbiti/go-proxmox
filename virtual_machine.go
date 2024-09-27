@@ -430,6 +430,15 @@ func (v *VirtualMachine) ResizeDisk(ctx context.Context, disk, size string) (err
 	return
 }
 
+func (v *VirtualMachine) ResizeDiskN(ctx context.Context, disk, size string) (*Task, error) {
+	var upid UPID
+	err := v.client.Put(ctx, fmt.Sprintf("/nodes/%s/qemu/%d/resize", v.Node, v.VMID), map[string]string{
+		"disk": disk,
+		"size": size,
+	}, &upid)
+	return NewTask(upid, v.client), err
+}
+
 func (v *VirtualMachine) UnlinkDisk(ctx context.Context, diskID string, force bool) (task *Task, err error) {
 	var upid UPID
 
